@@ -1,4 +1,4 @@
-"""用训练完的checkpoint对一张图或一个文件夹做推理。
+"""用训练完的checkpoint或预训练权重对一张图/一个文件夹进行推理。
 可传入两个参数: 图片路径、模型路径, 例如
 python predict.py
 python predict.py dataset/val/leaf_fossil/broken_2001.jpg

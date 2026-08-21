@@ -1,6 +1,7 @@
-# 安装：pip install torch torchvision
+# 安装：pip install torch torchvision openc-python numpy
 # 这是跨平台的精简示例, 使用torch.accelerator.current_accelerator()自动识别GPU
 
 torch>=2.7
 torchvision
+opencv-python
 numpy
