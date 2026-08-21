@@ -1,0 +1,17 @@
+{
+  "classes": [
+    "rock specimen",
+    "stone fossil",
+    "black and white scale bar",
+    "cm ruler",
+    "centimeter scale",
+    "metric scale"
+  ],
+  "stone_ids": [0, 1],
+  "ruler_ids": [2, 3, 4, 5],
+  "onnx": "yoloe_stone_ruler_26s.onnx",
+  "imgsz": 640,
+  "default_conf": 0.08,
+  "notes": "YOLOE-26s-seg multi-class bake. Stone (0-1) + ruler (2-5). Prompts tuned for photo scales (black and white scale bar / cm ruler / centimeter scale / metric scale). At conf>=0.08 imgsz=640: locate 9/9. Scale: try tick on top-5 ranked masks, pick best tick score → mean 0.76% / max 4.14% vs SAM3-ONNX predictions_onnx/results.csv (ImageSizeDetector/ruler_scale_yoloe.py).",
+  "selection": "rank_candidate then tick_best over top_k=5"
+}

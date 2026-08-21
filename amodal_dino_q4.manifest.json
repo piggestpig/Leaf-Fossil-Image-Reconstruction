@@ -1,0 +1,27 @@
+{
+  "format": "raw-byte-chunks-v1",
+  "model": "amodal_dino_q4.onnx",
+  "stem": "amodal_dino_q4",
+  "total_bytes": 282119626,
+  "sha256": "dc1bff90602eb56e97ac5b884dc9e36c14c2560bacca0ab66b38f000f356e12d",
+  "max_chunk_bytes": 99614720,
+  "n_chunks": 3,
+  "chunks": [
+    {
+      "file": "amodal_dino_q4.part000.bin",
+      "bytes": 99614720,
+      "index": 0
+    },
+    {
+      "file": "amodal_dino_q4.part001.bin",
+      "bytes": 99614720,
+      "index": 1
+    },
+    {
+      "file": "amodal_dino_q4.part002.bin",
+      "bytes": 82890186,
+      "index": 2
+    }
+  ],
+  "note": "Fetch chunks in order, concatenate, pass ArrayBuffer to ORT."
+}

@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title data-i18n="pageTitle">叶片化石 · 在线分析</title>
+  <style>
+    :root {
+      --bg: #12141a;
+      --panel: #1c1f28;
+      --text: #e8eaef;
+      --muted: #8b93a7;
+      --accent: #3d8bfd;
+      --ok: #3dd68c;
+      --err: #f07178;
+      --line: #2a3140;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "Segoe UI", system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+    header {
+      padding: 1rem 1.25rem;
+      border-bottom: 1px solid var(--line);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem 1.25rem;
+      align-items: flex-start;
+      justify-content: space-between;
+    }
+    header .titles { min-width: 0; flex: 1; display: flex; flex-wrap: wrap; gap: 0.5rem 1rem; align-items: baseline; }
+    header h1 { margin: 0; font-size: 1.15rem; font-weight: 650; }
+    header .badge {
+      font-size: 0.75rem;
+      padding: 0.2rem 0.55rem;
+      border-radius: 999px;
+      background: #243044;
+      color: var(--muted);
+    }
+    header .badge.ok { background: #1a3d2e; color: var(--ok); }
+    header .sub { margin: 0; font-size: 0.78rem; color: var(--muted); width: 100%; }
+    .lang-switch {
+      flex: 0 0 auto;
+      display: inline-flex;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      overflow: hidden;
+      background: #161922;
+    }
+    .lang-switch button {
+      width: auto;
+      margin: 0;
+      border: none;
+      border-radius: 0;
+      background: transparent;
+      color: var(--muted);
+      font-size: 0.78rem;
+      font-weight: 600;
+      padding: 0.35rem 0.75rem;
+      cursor: pointer;
+    }
+    .lang-switch button:hover { color: var(--text); }
+    .lang-switch button.active { background: var(--accent); color: #fff; }
+    main {
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      gap: 0;
+      min-height: calc(100vh - 58px);
+    }
+    @media (max-width: 900px) { main { grid-template-columns: 1fr; } }
+    aside {
+      padding: 1rem;
+      border-right: 1px solid var(--line);
+      background: var(--panel);
+      display: flex;
+      flex-direction: column;
+      gap: 0.85rem;
+    }
+    button, label.file {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.35rem;
+      width: 100%;
+      padding: 0.65rem 0.85rem;
+      border: none;
+      border-radius: 8px;
+      background: var(--accent);
+      color: #fff;
+      font-weight: 600;
+      cursor: pointer;
+      font-size: 0.9rem;
+    }
+    button:disabled { opacity: 0.45; cursor: not-allowed; }
+    button.secondary { background: #2c3344; color: var(--text); border: 1px solid var(--line); }
+    button.secondary:hover { border-color: var(--accent); color: var(--accent); }
+    button.active { border-color: var(--accent); color: var(--accent); background: rgba(61,139,253,0.12); }
+    label.file { background: #2c3344; }
+    label.file input { display: none; }
+    .field { display: flex; flex-direction: column; gap: 0.25rem; }
+    .field span { font-size: 0.78rem; color: var(--muted); }
+    .field input[type="range"] { width: 100%; }
+    .row { display: flex; gap: 0.45rem; align-items: center; }
+    .row input[type="number"] {
+      width: 4.2rem; flex: 0 0 auto;
+      background: var(--bg); border: 1px solid var(--line); color: var(--text);
+      border-radius: 6px; padding: 0.35rem 0.45rem; font: inherit;
+    }
+    .row button { margin: 0; flex: 1; padding: 0.45rem 0.55rem; font-size: 0.82rem; }
+    .hint { font-size: 0.72rem; color: var(--muted); line-height: 1.4; }
+    .status {
+      font-family: ui-monospace, Consolas, monospace;
+      font-size: 0.68rem;
+      line-height: 1.45;
+      background: #0e1016;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 0.55rem;
+      max-height: 220px;
+      overflow: auto;
+      white-space: pre-wrap;
+      color: #b8c0d0;
+    }
+    .status.err { color: var(--err); }
+    .status.ok { color: var(--ok); }
+    .stage { display: flex; flex-direction: column; gap: 0.75rem; padding: 0.85rem; min-width: 0; }
+    .nav-bar { display: flex; align-items: center; gap: 0.5rem; }
+    .nav-bar button { width: auto; min-width: 42px; padding: 0.4rem 0.65rem; }
+    .nav-info { flex: 1; text-align: center; font-size: 0.8rem; color: var(--muted); }
+    .nav-info strong { color: var(--text); }
+    .views {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.75rem;
+      align-items: start;
+    }
+    @media (max-width: 1100px) { .views { grid-template-columns: 1fr; } }
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+    .card .cap {
+      display: flex;
+      justify-content: space-between;
+      padding: 0.45rem 0.65rem;
+      font-size: 0.78rem;
+      color: var(--muted);
+      border-bottom: 1px solid var(--line);
+    }
+    .stack { position: relative; background: #0a0b0f; }
+    .stack canvas { display: block; width: 100%; height: auto; }
+    .stack canvas.overlay {
+      position: absolute; left: 0; top: 0; width: 100%; height: 100%;
+      cursor: crosshair; touch-action: none;
+    }
+    .stack canvas.overlay.disabled { pointer-events: none; cursor: default; }
+    .under {
+      padding: 0.65rem 0.7rem 0.75rem;
+      border-top: 1px solid var(--line);
+      background: #161922;
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+    .under h3 {
+      margin: 0;
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--muted);
+      font-weight: 600;
+    }
+    .under .field { margin-bottom: 0; }
+    .under .hint { margin: 0; }
+    .chan-row { display: flex; flex-direction: column; gap: 0.2rem; margin-bottom: 0.2rem; }
+    .chan-row .top {
+      display: flex; align-items: center; gap: 0.4rem;
+      font-size: 0.78rem; color: var(--muted);
+    }
+    .chan-row .top label.name {
+      flex: 1; display: flex; align-items: center; gap: 0.35rem;
+      margin: 0; cursor: pointer; user-select: none;
+    }
+    .chan-row .top input[type="checkbox"] { width: auto; margin: 0; accent-color: var(--accent); }
+    .chan-row .top input[type="color"] {
+      width: 1.35rem; height: 1.15rem; padding: 0;
+      border: 1px solid var(--line); border-radius: 4px;
+      background: transparent; cursor: pointer;
+    }
+    .chan-row .top strong {
+      color: var(--text); font-variant-numeric: tabular-nums;
+      min-width: 2.4rem; text-align: right;
+    }
+    .chan-row.off { opacity: 0.45; }
+    .chan-row.off input[type="range"],
+    .chan-row.off input[type="number"] { pointer-events: none; }
+    .legend { display: flex; flex-wrap: wrap; gap: 0.65rem; font-size: 0.72rem; color: var(--muted); }
+    .legend i {
+      display: inline-block; width: 10px; height: 10px; border-radius: 2px;
+      margin-right: 0.25rem; vertical-align: middle;
+    }
+    .thumb-strip { display: flex; gap: 0.35rem; overflow-x: auto; padding: 0.25rem 0; }
+    .thumb {
+      flex: 0 0 auto; width: 52px; height: 52px; border-radius: 6px;
+      border: 2px solid transparent; object-fit: cover; cursor: pointer;
+      opacity: 0.7; background: #0e1016;
+    }
+    .thumb.active { border-color: var(--accent); opacity: 1; }
+    .thumb.done { box-shadow: inset 0 0 0 2px var(--ok); }
+    .thumb.broken {
+      display: inline-flex; align-items: center; justify-content: center;
+      background: #3a2222; color: #f88; font-size: 1.1rem; font-weight: 700;
+      opacity: 0.85;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="titles">
+      <h1><span data-i18n="headerTitle">叶片化石分析</span></h1>
+      <span class="badge" id="badge">…</span>
+      <p class="sub" data-i18n="headerSub">① 找出石头 → ② 画出叶子轮廓和叶脉 · 可在浏览器里离线运行</p>
+    </div>
+    <div class="lang-switch" role="group" aria-label="Language">
+      <button type="button" id="btnLangZh" data-i18n="langZh">中文</button>
+      <button type="button" id="btnLangEn" data-i18n="langEn">EN</button>
+    </div>
+  </header>
+  <main>
+    <aside>
+      <button id="btnLoad" type="button" data-i18n="btnLoad">加载分析模型</button>
+      <p class="hint" data-i18n="hintLoad">本机已有完整模型文件时会自动加载；网上打开时请点按钮（大约要下载 300MB）</p>
+
+      <label class="file"><span data-i18n="labelUploadImages">从相册选择图片</span><input type="file" id="imageFile" accept="image/*" multiple /></label>
+      <label class="file"><span data-i18n="labelCamera">现场拍照</span><input type="file" id="cameraFile" accept="image/*" capture="environment" /></label>
+      <p class="hint" data-i18n="hintCamera">手机上会打开后置摄像头；拍完后自动显示这张照片</p>
+      <div class="thumb-strip" id="thumbStrip"></div>
+      <p class="hint" id="albumHint" data-i18n="albumEmpty">还没有图片</p>
+
+      <button id="btnRun" type="button" disabled data-i18n="btnRun">分析当前这张</button>
+      <button id="btnBatch" class="secondary" type="button" disabled data-i18n="btnBatch">批量分析全部</button>
+      <div class="legend">
+        <span><i style="background:#00c800"></i><span data-i18n="legendVis">可见部分</span></span>
+        <span><i style="background:#c8c800"></i><span data-i18n="legendLeaf">完整叶片</span></span>
+        <span><i style="background:#0000c8"></i><span data-i18n="legendVein">主叶脉</span></span>
+        <span><i style="background:#c800c8"></i><span data-i18n="legendDetail">细叶脉</span></span>
+      </div>
+      <pre class="status" id="status"></pre>
+      <p class="hint" data-i18n="hintServer">电脑上请双击 start_server.bat 打开本页，不要直接双击 html 文件</p>
+    </aside>
+    <section class="stage">
+      <div class="nav-bar">
+        <button class="secondary" id="btnPrev" type="button" disabled>◀</button>
+        <div class="nav-info" id="navInfo">0 / 0</div>
+        <button class="secondary" id="btnNext" type="button" disabled>▶</button>
+      </div>
+      <div class="views">
+        <div class="card">
+          <div class="cap"><span data-i18n="capOrig">① 原图 · 可涂抹ROI区域</span><span id="imgMeta"></span></div>
+          <div class="stack" id="origStack">
+            <canvas id="cOrig"></canvas>
+            <canvas id="cRoi" class="overlay disabled"></canvas>
+          </div>
+          <div class="under">
+            <h3 data-i18n="roiTitle">涂抹ROI区域</h3>
+            <div class="row">
+              <button class="secondary" id="btnDraw" type="button" data-i18n="btnDraw">画笔</button>
+              <button class="secondary" id="btnErase" type="button" data-i18n="btnErase">橡皮</button>
+            </div>
+            <label class="field"><span><span data-i18n="brushSize">笔刷大小</span> <strong id="brushVal">24</strong></span>
+              <div class="row">
+                <input type="range" id="brushSize" min="4" max="256" step="1" value="24" />
+                <input type="number" id="brushNum" min="4" max="256" step="1" value="24" />
+              </div>
+            </label>
+            <button class="secondary" id="btnRoiReset" type="button" data-i18n="btnRoiReset">恢复为默认（中性 0.5）</button>
+            <button class="secondary" id="btnRoiClear" type="button" data-i18n="btnRoiClear">全部标为忽略（0）</button>
+            <p class="hint" data-i18n="hintRoi">左键涂青=关注(1)，右键涂红=忽略(0)。未涂抹处为中性 0.5，无需先清空。</p>
+          </div>
+        </div>
+        <div class="card">
+          <div class="cap"><span data-i18n="capStone">② 抠出的石头（白底）</span><span id="stoneMeta"></span></div>
+          <div class="stack"><canvas id="cStone"></canvas></div>
+          <div class="under">
+            <h3 data-i18n="stoneThrTitle">找石头的灵敏度</h3>
+            <label class="field"><span><span data-i18n="scoreLabel">置信度（越高越严格）</span> <strong id="scoreVal">0.05</strong></span>
+              <div class="row">
+                <input type="range" id="scoreThr" min="0" max="1" step="0.01" value="0.05" />
+                <input type="number" id="scoreNum" min="0" max="1" step="0.01" value="0.05" />
+              </div>
+            </label>
+            <p class="hint" data-i18n="hintStoneThr">拖动后会自动重算。一般只调「置信度」即可。</p>
+          </div>
+        </div>
+        <div class="card">
+          <div class="cap"><span data-i18n="capAmodal">③ 叶子与叶脉叠加</span><span id="amodalMeta"></span></div>
+          <div class="stack"><canvas id="cAmodal"></canvas></div>
+          <div class="under" id="amodalControls">
+            <h3 data-i18n="amodalThrTitle">各层显示开关与灵敏度</h3>
+            <div class="chan-row" data-head="0">
+              <div class="top">
+                <label class="name"><input type="checkbox" id="enVis" checked /><span data-i18n="headVis">可见部分</span></label>
+                <input type="color" id="colVis" value="#00c800" title="颜色" />
+                <strong id="thrVisVal">0.50</strong>
+              </div>
+              <div class="row"><input type="range" id="thrVis" min="0" max="1" step="0.01" value="0.50" /><input type="number" id="thrVisNum" min="0" max="1" step="0.01" value="0.50" /></div>
+            </div>
+            <div class="chan-row" data-head="1">
+              <div class="top">
+                <label class="name"><input type="checkbox" id="enLeaf" checked /><span data-i18n="headLeaf">完整叶片</span></label>
+                <input type="color" id="colLeaf" value="#c8c800" title="颜色" />
+                <strong id="thrLeafVal">0.50</strong>
+              </div>
+              <div class="row"><input type="range" id="thrLeaf" min="0" max="1" step="0.01" value="0.50" /><input type="number" id="thrLeafNum" min="0" max="1" step="0.01" value="0.50" /></div>
+            </div>
+            <div class="chan-row" data-head="2">
+              <div class="top">
+                <label class="name"><input type="checkbox" id="enVein" checked /><span data-i18n="headVein">主叶脉</span></label>
+                <input type="color" id="colVein" value="#0000c8" title="颜色" />
+                <strong id="thrVeinVal">0.50</strong>
+              </div>
+              <div class="row"><input type="range" id="thrVein" min="0" max="1" step="0.01" value="0.50" /><input type="number" id="thrVeinNum" min="0" max="1" step="0.01" value="0.50" /></div>
+            </div>
+            <div class="chan-row" data-head="3">
+              <div class="top">
+                <label class="name"><input type="checkbox" id="enDetail" checked /><span data-i18n="headDetail">细叶脉</span></label>
+                <input type="color" id="colDetail" value="#c800c8" title="颜色" />
+                <strong id="thrDetailVal">0.50</strong>
+              </div>
+              <div class="row"><input type="range" id="thrDetail" min="0" max="1" step="0.01" value="0.50" /><input type="number" id="thrDetailNum" min="0" max="1" step="0.01" value="0.50" /></div>
+            </div>
+            <p class="hint" data-i18n="hintAmodalThr">勾选是否显示 · 点色块改颜色 · 拖动滑条立刻更新，不用重新跑模型</p>
+            <h3 style="margin-top:0.75rem" data-i18n="sizeTitle">叶片尺寸（靠图里的尺子）</h3>
+            <label class="name" style="display:flex;align-items:center;gap:0.4rem;margin:0.25rem 0;font-size:0.78rem;color:var(--muted);cursor:pointer;">
+              <input type="checkbox" id="enLeafBox" checked />
+              <span data-i18n="enLeafBox">在图上画出叶片外框和尺寸</span>
+            </label>
+            <p class="hint" id="leafMetrics" data-i18n="metricsNone">尺寸：未计算</p>
+            <p class="hint" id="amodalQuality" data-i18n="qualityNone">质量：未评估</p>
+            <p class="hint" data-i18n="hintQuality">质量分：看轮廓是否清晰、形状是否规整（改灵敏度会重算）。</p>
+            <p class="hint" data-i18n="hintScale">若照片里有厘米尺，会自动估算出叶片长、宽、面积。</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+  <script type="module" src="./app.js"></script>
+</body>
+</html>
