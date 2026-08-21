@@ -3,11 +3,10 @@
 [![arXiv](https://img.shields.io/badge/arXiv-2608.04423-red)](https://arxiv.org/abs/2608.04423v1)
 [![Demo](https://img.shields.io/badge/%F0%9F%8C%90-Online%20Demo-blue)](https://piggestpig.github.io/Leaf-Fossil-Image-Reconstruction/)
 
-## 简介
-这是一个基于DINOv3的树叶化石图像重建项目，当前上传了合成数据集、训练代码、权重、网页部署等内容，存放在不同的分支中
+⭐这是一个基于DINOv3的树叶化石图像重建项目，包含合成数据集、训练代码、权重、网页部署等内容，存放在不同的分支中
 
 ## 快速开始
-4bit量化模型已经部署到网页上了，[点击查看在线演示](https://piggestpig.github.io/Leaf-Fossil-Image-Reconstruction/)
+4bit量化模型已经部署到网页上了！[点击查看在线演示](https://piggestpig.github.io/Leaf-Fossil-Image-Reconstruction/)
 
 需要Edge/Chrome/Safari等支持WebGPU的浏览器，下载约300MB模型后使用本地算力推理
 
@@ -19,16 +18,16 @@
 - 实测Windows+Intel核显也能运行，注意一定要安装**正确的pytorch版本**，比如Intel这边用 pip install torch torchvision --index-url https://download.pytorch.org/whl/xpu
 
 ### · main
-- 你正在查看就是主分支，这里有简化版训练/推理代码，总共约75MB
-- [train.py](./train.py): 需要下载[`DINOv3_weights`](https://github.com/PiggestPig/Leaf-Fossil-Image-Reconstruction/tree/DINOv3_weights)分支里的初始权重，放置在`weights`文件夹中，然后运行此脚本训练模型。使用方法和超参数写在文件开头。
-- [predict.py](./predict.py): 训练后运行此脚本推理图片；或者直接下载[`AmodalDINO_weights`](https://github.com/PiggestPig/Leaf-Fossil-Image-Reconstruction/tree/AmodalDINO_weights)分支的预训练权重，放置在`weights`文件夹中，然后运行此脚本进行推理。使用方法写在文件开头。
-- [dataset文件夹](./dataset) 存放了1%的数据集用于快速测试。完整数据集位于[`dataset`](https://github.com/PiggestPig/Leaf-Fossil-Image-Reconstruction/tree/dataset)分支。
+- 你正在查看就是主分支，这里有简化版训练/推理代码，总共约75MB。
+- [train.py](./train.py): 需要下载`DINOv3_weights分支`里的初始权重，放置在`weights`文件夹中，然后运行此脚本训练模型。使用方法和超参数写在文件开头。
+- [predict.py](./predict.py): 训练后运行此脚本推理图片；或者直接下载`AmodalDINO_weights分支`的预训练权重，放置在`weights`文件夹中，然后运行此脚本进行推理。使用方法写在文件开头。
+- [dataset文件夹](./dataset) 存放了1%的数据集用于快速测试。完整数据集位于`dataset分支`。
 
 ### · [AmodalDINO_weights](https://github.com/PiggestPig/Leaf-Fossil-Image-Reconstruction/tree/AmodalDINO_weights)
 - 完整的fp32预训练权重，约1.2GB，通过分卷压缩上传到github上
 
 ### · [DINOv3_weights](https://github.com/PiggestPig/Leaf-Fossil-Image-Reconstruction/tree/DINOv3_weights)
-- [DINOv3 ViT-L/16](https://github.com/facebookresearch/dinov3#pretrained-models) 的官方初始权重，约1.1GB，通过分卷压缩上传到github上
+- DINOv3 ViT-L/16的官方初始权重，约1.1GB，通过分卷压缩上传到github上
 
 ### · [blender](https://github.com/PiggestPig/Leaf-Fossil-Image-Reconstruction/tree/blender)
 - 用于合成树叶化石图片的原素材 + Blender 5.2工程文件 + 后处理python脚本，约700MB
