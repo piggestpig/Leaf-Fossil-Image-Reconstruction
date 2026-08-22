@@ -3,6 +3,8 @@
 [![arXiv](https://img.shields.io/badge/arXiv-2608.04423-red)](https://arxiv.org/abs/2608.04423v1)
 [![Demo](https://img.shields.io/badge/%F0%9F%8C%90-Online%20Demo-blue)](https://piggestpig.github.io/Leaf-Fossil-Image-Reconstruction/)
 
+[中文](./README.md) | [English](./README_EN.md)
+
 ⭐这是一个基于DINOv3的树叶化石图像重建项目，包含合成数据集、训练代码、权重、网页部署等内容，存放在不同的分支中
 
 ## 快速开始
